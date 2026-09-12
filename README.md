@@ -89,7 +89,7 @@ minecraft-cloud/
 - **Phase 0** - Architecture and repository structure ✅
 - **Phase 1** - Minecraft Docker prototype ✅
 - **Phase 2** - Node.js + Express server-management API ✅
-- **Phase 3** - Web dashboard
+- **Phase 3** - Web dashboard ✅
 - **Phase 4** - Persistent platform metadata and workload hardening
 - **Phase 5** - Docker Compose deployment
 - **Phase 6** - CI/CD with GitHub Actions
@@ -113,6 +113,12 @@ Key properties:
 - Graceful shutdown window.
 
 See `docs/phase-1-minecraft-prototype.md` for the local verification procedure.
+
+## Phase 3 Dashboard
+
+Phase 3 adds a responsive React + Vite dashboard for creating and managing Minecraft server instances through the Express control-plane API. It supports list/create/start/stop/restart/delete actions, Docker health status, resource summaries, and server connection details.
+
+See `docs/phase-3-web-dashboard.md` for setup and verification.
 
 ## Phase 2 Control Plane
 
@@ -168,4 +174,4 @@ These can be added later as optional extensions after the core platform is stabl
 
 ## Status
 
-**Current phase: Phase 2 - Node.js + Express control-plane API implemented. Next: Phase 3 web dashboard.**
+**Current phase: Phase 3 - React web dashboard implemented and production build validated. Next: Phase 4 persistent platform metadata and workload hardening.**
