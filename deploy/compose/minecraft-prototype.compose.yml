@@ -1,0 +1,35 @@
+name: minecraft-cloud-prototype
+
+services:
+  minecraft:
+    image: itzg/minecraft-server:stable
+    container_name: minecraft-cloud-prototype
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    ports:
+      - "${MINECRAFT_PROTOTYPE_PORT:-25565}:25565"
+    environment:
+      EULA: "TRUE"
+      TYPE: "VANILLA"
+      VERSION: "${MINECRAFT_VERSION:-LATEST}"
+      MEMORY: "${MINECRAFT_JVM_MEMORY:-1G}"
+      MAX_PLAYERS: "${MINECRAFT_MAX_PLAYERS:-10}"
+      MOTD: "${MINECRAFT_MOTD:-Minecraft Cloud Prototype}"
+      DIFFICULTY: "${MINECRAFT_DIFFICULTY:-normal}"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: "${MINECRAFT_RCON_PASSWORD:-change-me-local-only}"
+    volumes:
+      - minecraft_prototype_data:/data
+    cpus: "${MINECRAFT_CPU_LIMIT:-1.0}"
+    mem_limit: "${MINECRAFT_CONTAINER_MEMORY_LIMIT:-1536M}"
+    stop_grace_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  minecraft_prototype_data:
+    name: minecraft-cloud-prototype-data
