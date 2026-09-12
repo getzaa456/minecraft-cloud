@@ -71,33 +71,33 @@ The browser never talks directly to Docker. Minecraft lifecycle operations are o
 
 ```text
 minecraft-cloud/
-โ”โ”€โ”€ backend/                # Node.js + Express control-plane API
-โ”โ”€โ”€ frontend/               # React + Vite web dashboard
-โ”โ”€โ”€ deploy/
-โ”   โ””โ”€โ”€ compose/            # Production Docker Compose deployment
-โ”โ”€โ”€ infra/
-โ”   โ”โ”€โ”€ terraform/          # Infrastructure provisioning
-โ”   โ””โ”€โ”€ ansible/            # Host configuration
-โ”โ”€โ”€ monitoring/
-โ”   โ”โ”€โ”€ prometheus/         # Prometheus configuration
-โ”   โ””โ”€โ”€ grafana/            # Grafana provisioning and dashboards
-โ”โ”€โ”€ scripts/                # Local/dev/ops helper scripts
-โ”โ”€โ”€ docs/                   # Architecture and phase documentation
-โ”โ”€โ”€ .github/
-โ”   โ””โ”€โ”€ workflows/          # CI/CD pipelines
-โ”โ”€โ”€ .env.example
-โ”โ”€โ”€ .gitignore
-โ””โ”€โ”€ README.md
+├── backend/                # Node.js + Express control-plane API
+├── frontend/               # React + Vite web dashboard
+├── deploy/
+│   └── compose/            # Production Docker Compose deployment
+├── infra/
+│   ├── terraform/          # Infrastructure provisioning
+│   └── ansible/            # Host configuration
+├── monitoring/
+│   ├── prometheus/         # Prometheus configuration
+│   └── grafana/            # Grafana provisioning and dashboards
+├── scripts/                # Local/dev/ops helper scripts
+├── docs/                   # Architecture and phase documentation
+├── .github/
+│   └── workflows/          # CI/CD pipelines
+├── .env.example
+├── .gitignore
+└── README.md
 ```
 
 ## Project Phases
 
-- **Phase 0** - Architecture and repository structure โ…
-- **Phase 1** - Minecraft Docker prototype โ…
-- **Phase 2** - Node.js + Express server-management API โ…
-- **Phase 3** - React web dashboard โ…
-- **Phase 4** - PostgreSQL metadata persistence and workload hardening โ…
-- **Phase 5** - Single-host Docker Compose deployment โ…
+- **Phase 0** - Architecture and repository structure ✅
+- **Phase 1** - Minecraft Docker prototype ✅
+- **Phase 2** - Node.js + Express server-management API ✅
+- **Phase 3** - React web dashboard ✅
+- **Phase 4** - PostgreSQL metadata persistence and workload hardening ✅
+- **Phase 5** - Single-host Docker Compose deployment ✅
 - **Phase 6** - CI/CD with GitHub Actions
 - **Phase 7** - Terraform infrastructure
 - **Phase 8** - Ansible configuration management
@@ -158,7 +158,7 @@ PostgreSQL
 Docker Socket Proxy
 ```
 
-Only Caddy is exposed as the HTTP entrypoint. Backend, PostgreSQL, and Docker API access remain on internal Docker networks.
+Only Caddy publishes an HTTP port to the host. Backend and PostgreSQL are reachable only through the Compose network, while Docker API access is isolated on a dedicated internal network.
 
 See `docs/phase-5-docker-compose-deployment.md` for the deployment runbook.
 
@@ -230,5 +230,7 @@ These can be added later as optional extensions after the core platform is stabl
 ## Status
 
 **Current phase: Phase 5 - Single-host Docker Compose deployment implemented. Next: Phase 6 CI/CD with GitHub Actions.**
+
+
 
 
