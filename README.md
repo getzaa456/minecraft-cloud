@@ -1,4 +1,4 @@
-# Minecraft Cloud
+﻿# Minecraft Cloud
 
 A small self-service Minecraft server hosting platform built as a DevOps / Platform Engineering portfolio project.
 
@@ -71,33 +71,33 @@ The browser never talks directly to Docker. Minecraft lifecycle operations are o
 
 ```text
 minecraft-cloud/
-├── backend/                # Node.js + Express control-plane API
-├── frontend/               # React + Vite web dashboard
-├── deploy/
-│   └── compose/            # Production Docker Compose deployment
-├── infra/
-│   ├── terraform/          # Infrastructure provisioning
-│   └── ansible/            # Host configuration
-├── monitoring/
-│   ├── prometheus/         # Prometheus configuration
-│   └── grafana/            # Grafana provisioning and dashboards
-├── scripts/                # Local/dev/ops helper scripts
-├── docs/                   # Architecture and phase documentation
-├── .github/
-│   └── workflows/          # CI/CD pipelines
-├── .env.example
-├── .gitignore
-└── README.md
+โ”โ”€โ”€ backend/                # Node.js + Express control-plane API
+โ”โ”€โ”€ frontend/               # React + Vite web dashboard
+โ”โ”€โ”€ deploy/
+โ”   โ””โ”€โ”€ compose/            # Production Docker Compose deployment
+โ”โ”€โ”€ infra/
+โ”   โ”โ”€โ”€ terraform/          # Infrastructure provisioning
+โ”   โ””โ”€โ”€ ansible/            # Host configuration
+โ”โ”€โ”€ monitoring/
+โ”   โ”โ”€โ”€ prometheus/         # Prometheus configuration
+โ”   โ””โ”€โ”€ grafana/            # Grafana provisioning and dashboards
+โ”โ”€โ”€ scripts/                # Local/dev/ops helper scripts
+โ”โ”€โ”€ docs/                   # Architecture and phase documentation
+โ”โ”€โ”€ .github/
+โ”   โ””โ”€โ”€ workflows/          # CI/CD pipelines
+โ”โ”€โ”€ .env.example
+โ”โ”€โ”€ .gitignore
+โ””โ”€โ”€ README.md
 ```
 
 ## Project Phases
 
-- **Phase 0** - Architecture and repository structure ✅
-- **Phase 1** - Minecraft Docker prototype ✅
-- **Phase 2** - Node.js + Express server-management API ✅
-- **Phase 3** - React web dashboard ✅
-- **Phase 4** - PostgreSQL metadata persistence and workload hardening ✅
-- **Phase 5** - Single-host Docker Compose deployment ✅
+- **Phase 0** - Architecture and repository structure โ…
+- **Phase 1** - Minecraft Docker prototype โ…
+- **Phase 2** - Node.js + Express server-management API โ…
+- **Phase 3** - React web dashboard โ…
+- **Phase 4** - PostgreSQL metadata persistence and workload hardening โ…
+- **Phase 5** - Single-host Docker Compose deployment โ…
 - **Phase 6** - CI/CD with GitHub Actions
 - **Phase 7** - Terraform infrastructure
 - **Phase 8** - Ansible configuration management
@@ -167,16 +167,16 @@ See `docs/phase-5-docker-compose-deployment.md` for the deployment runbook.
 Create the platform environment file:
 
 ```powershell
-Copy-Item deploy/compose/.env.platform.example deploy/compose/.env.platform
+Copy-Item .env.example .env
 ```
 
-Edit `deploy/compose/.env.platform` and change the default PostgreSQL password before deployment.
+Edit `.env` and change the default PostgreSQL password before deployment.
 
 Build and start the platform:
 
 ```powershell
 docker compose `
-  --env-file deploy/compose/.env.platform `
+  --env-file .env `
   -f deploy/compose/platform.compose.yml `
   up -d --build
 ```
@@ -191,7 +191,7 @@ Check platform status:
 
 ```powershell
 docker compose `
-  --env-file deploy/compose/.env.platform `
+  --env-file .env `
   -f deploy/compose/platform.compose.yml `
   ps
 ```
@@ -230,3 +230,5 @@ These can be added later as optional extensions after the core platform is stabl
 ## Status
 
 **Current phase: Phase 5 - Single-host Docker Compose deployment implemented. Next: Phase 6 CI/CD with GitHub Actions.**
+
+

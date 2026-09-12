@@ -1,4 +1,4 @@
-# Project Scope
+﻿# Project Scope
 
 ## Problem Statement
 
@@ -61,3 +61,4 @@ Metrics + Dashboard
 ```
 
 The final system should be easy to demonstrate locally or on one small Linux VM and easy to explain in a DevOps internship interview.
+

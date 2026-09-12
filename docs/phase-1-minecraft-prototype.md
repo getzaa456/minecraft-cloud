@@ -36,15 +36,15 @@ The named volume is intentionally independent from the container lifecycle. Recr
 From the repository root, create a local environment file:
 
 ```powershell
-Use the Phase 5 deployment environment template: `deploy/compose/.env.platform.example`
+Use the Phase 5 deployment environment template: `.env.example`
 ```
 
-Review the values in `.env.prototype`. The default prototype uses one CPU and limits the container to 1536 MB while assigning 1 GB to the Minecraft JVM.
+Review the values in the root `.env`. The default prototype uses one CPU and limits the container to 1536 MB while assigning 1 GB to the Minecraft JVM.
 
 ## Start the prototype
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml up -d
+docker compose --env-file .env -f deploy/compose/platform.compose.yml up -d
 ```
 
 The first startup can take longer because Docker must pull the image and Minecraft must create the initial world.
@@ -52,7 +52,7 @@ The first startup can take longer because Docker must pull the image and Minecra
 ## Check status
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml ps
+docker compose --env-file .env -f deploy/compose/platform.compose.yml ps
 ```
 
 Follow the server logs:
@@ -98,7 +98,7 @@ The container should show the configured CPU and memory limits.
 Stop and remove only the container/network while keeping the world volume:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml down
+docker compose --env-file .env -f deploy/compose/platform.compose.yml down
 ```
 
 To intentionally reset the prototype world as well:
@@ -125,4 +125,6 @@ Phase 1 is complete when all of the following are demonstrated locally:
 The server is still defined statically in Docker Compose. This is only the workload prototype.
 
 In Phase 2, the Node.js + Express backend will replace this manual lifecycle by creating and controlling Minecraft containers dynamically through Docker Engine while keeping the workload concepts proven here: image, environment, ports, resource limits, and persistent volumes.
+
+
 

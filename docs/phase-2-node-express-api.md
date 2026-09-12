@@ -1,4 +1,4 @@
-# Phase 2 - Node.js + Express Control Plane
+﻿# Phase 2 - Node.js + Express Control Plane
 
 Phase 2 replaces manual Docker lifecycle commands with a backend API that owns Minecraft server provisioning and lifecycle operations.
 
@@ -117,7 +117,7 @@ Deletion removes both the managed container and its named world volume. Normal s
 From the project root in PowerShell:
 
 ```powershell
-Copy-Item backend/.env.example backend/.env
+Copy-Item .env.example .env
 cd backend
 npm install
 npm run check
@@ -176,3 +176,5 @@ A later phase can add platform-level persistence for users, desired configuratio
 - No historical state stored outside Docker.
 
 These are intentional scope limits for a student portfolio project.
+
+

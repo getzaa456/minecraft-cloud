@@ -1,4 +1,4 @@
-# Architecture
+﻿# Architecture
 
 ## Purpose
 
@@ -96,3 +96,4 @@ Monitoring focuses on host health and per-container resource usage. Centralized 
 The MVP targets a **single Linux host**. This is intentional: it keeps the architecture understandable while still demonstrating container orchestration concepts, infrastructure automation, CI/CD, and monitoring.
 
 Kubernetes, multi-node scheduling, and multi-region hosting are explicitly deferred.
+

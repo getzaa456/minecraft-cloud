@@ -59,19 +59,19 @@ Container creation also performs best-effort rollback. If container creation or 
 Start the development database from the project root:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml up -d postgres
+docker compose --env-file .env -f deploy/compose/platform.compose.yml up -d postgres
 ```
 
 Check it:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml ps postgres
+docker compose --env-file .env -f deploy/compose/platform.compose.yml ps postgres
 ```
 
 Prepare backend environment variables if needed:
 
 ```powershell
-Copy-Item backend/.env.example backend/.env
+Copy-Item .env.example .env
 ```
 
 Then run the API:
@@ -101,3 +101,5 @@ If Docker or PostgreSQL is unavailable, the API returns a degraded health respon
 ## Phase Boundary
 
 Phase 4 intentionally does not create the complete application deployment stack. PostgreSQL has a small development Compose file only. Phase 5 will combine frontend, backend, PostgreSQL, reverse proxy, and related platform services into the main Docker Compose deployment.
+
+

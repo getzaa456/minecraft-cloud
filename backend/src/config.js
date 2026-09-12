@@ -1,4 +1,7 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+
+// Load the single project-level environment file when running the backend directly.
+dotenv.config({ path: new URL('../../.env', import.meta.url) });
 
 const numberFromEnv = (name, fallback) => {
   const value = Number(process.env[name] ?? fallback);
@@ -8,13 +11,17 @@ const numberFromEnv = (name, fallback) => {
   return value;
 };
 
+const postgresDb = process.env.POSTGRES_DB ?? 'minecraft_cloud';
+const postgresUser = process.env.POSTGRES_USER ?? 'minecraft_cloud';
+const postgresPassword = process.env.POSTGRES_PASSWORD ?? 'change-me';
+
 export const config = {
   host: process.env.BACKEND_HOST ?? '0.0.0.0',
   port: numberFromEnv('BACKEND_PORT', 8000),
   corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
   databaseUrl:
     process.env.DATABASE_URL ??
-    'postgresql://minecraft_cloud:change-me@localhost:5432/minecraft_cloud',
+    `postgresql://${postgresUser}:${postgresPassword}@localhost:5432/${postgresDb}`,
   dockerHost: process.env.DOCKER_HOST ?? null,
   dockerSocketPath:
     process.env.DOCKER_SOCKET_PATH ??

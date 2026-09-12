@@ -2,7 +2,6 @@
 .env
 .env.*
 !.env.example
-!deploy/compose/.env.platform.example
 
 # Python
 __pycache__/
@@ -49,3 +48,4 @@ logs/
 
 # Local certificates
 certs/
+

@@ -1,4 +1,4 @@
-# Phase 3 - React Web Dashboard
+﻿# Phase 3 - React Web Dashboard
 
 Phase 3 adds the self-service web interface for the Minecraft Cloud control plane.
 
@@ -33,16 +33,15 @@ No state-management or UI framework is introduced because the current dashboard 
 
 ```text
 frontend/
-├── src/
-│   ├── api.js
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── styles.css
-├── .env.example
-├── eslint.config.js
-├── index.html
-├── package.json
-└── package-lock.json
+โ”โ”€โ”€ src/
+โ”   โ”โ”€โ”€ api.js
+โ”   โ”โ”€โ”€ App.jsx
+โ”   โ”โ”€โ”€ main.jsx
+โ”   โ””โ”€โ”€ styles.css
+โ”โ”€โ”€ eslint.config.js
+โ”โ”€โ”€ index.html
+โ”โ”€โ”€ package.json
+โ””โ”€โ”€ package-lock.json
 ```
 
 ## API Integration
@@ -67,7 +66,6 @@ Start the backend first, then run the frontend:
 
 ```powershell
 cd frontend
-Copy-Item .env.example .env
 npm install
 npm run dev
 ```
@@ -108,3 +106,6 @@ The backend remains responsible for allocating the Minecraft port, creating the 
 ## Phase Boundary
 
 Phase 3 is only the web control surface. Deployment packaging, database-backed metadata, CI/CD, infrastructure provisioning, configuration management, and observability remain separate later phases so the project stays explainable and manageable.
+
+
+

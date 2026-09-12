@@ -1,4 +1,4 @@
-# Phase 5 - Docker Compose Deployment
+﻿# Phase 5 - Docker Compose Deployment
 
 Phase 5 packages the Minecraft Cloud control plane into a single-host Docker Compose deployment.
 
@@ -54,7 +54,7 @@ This reduces direct socket exposure, but the backend remains a trusted control-p
 Copy the environment template:
 
 ```powershell
-Copy-Item deploy/compose/.env.platform.example deploy/compose/.env.platform
+Copy-Item .env.example .env
 ```
 
 Review at least `POSTGRES_PASSWORD` before using the stack outside a throwaway local environment.
@@ -62,13 +62,13 @@ Review at least `POSTGRES_PASSWORD` before using the stack outside a throwaway l
 Validate configuration:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml config
+docker compose --env-file .env -f deploy/compose/platform.compose.yml config
 ```
 
 Build and start:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml up -d --build
+docker compose --env-file .env -f deploy/compose/platform.compose.yml up -d --build
 ```
 
 Open:
@@ -80,19 +80,19 @@ http://localhost
 Check services:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml ps
+docker compose --env-file .env -f deploy/compose/platform.compose.yml ps
 ```
 
 View logs:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml logs -f
+docker compose --env-file .env -f deploy/compose/platform.compose.yml logs -f
 ```
 
 Backend logs only:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml logs -f backend
+docker compose --env-file .env -f deploy/compose/platform.compose.yml logs -f backend
 ```
 
 ## Stop / Restart
@@ -100,13 +100,13 @@ docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platfor
 Stop while keeping persistent data:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml down
+docker compose --env-file .env -f deploy/compose/platform.compose.yml down
 ```
 
 Start again:
 
 ```powershell
-docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml up -d
+docker compose --env-file .env -f deploy/compose/platform.compose.yml up -d
 ```
 
 Do not use `down -v` unless you intentionally want to remove Compose-managed PostgreSQL and Caddy volumes.
@@ -128,3 +128,5 @@ Phase 5 intentionally does not include:
 - Ansible host configuration (Phase 8)
 - Prometheus/Grafana monitoring (Phase 9)
 - public TLS/domain hardening and broader security review (Phase 10)
+
+
