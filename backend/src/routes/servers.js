@@ -8,7 +8,7 @@ import {
   restartServer,
   startServer,
   stopServer,
-} from '../services/docker.js';
+} from '../services/serverManager.js';
 
 const router = Router();
 

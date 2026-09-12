@@ -1,8 +1,8 @@
-# Environment / secrets
+﻿# Environment / secrets
 .env
 .env.*
 !.env.example
-!deploy/compose/.env.prototype.example
+!deploy/compose/.env.platform.example
 
 # Python
 __pycache__/

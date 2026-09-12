@@ -1,4 +1,4 @@
-# Minecraft Cloud
+﻿# Minecraft Cloud
 
 A small self-service Minecraft server hosting platform built as a DevOps / Platform Engineering portfolio project.
 
@@ -65,33 +65,33 @@ The web application never talks directly to the Docker socket. Docker lifecycle 
 
 ```text
 minecraft-cloud/
-├── backend/                # Node.js + Express control-plane API
-├── frontend/               # React web dashboard
-├── deploy/
-│   └── compose/            # Docker Compose deployment files and Phase 1 prototype
-├── infra/
-│   ├── terraform/          # Infrastructure provisioning
-│   └── ansible/            # Host configuration
-├── monitoring/
-│   ├── prometheus/         # Prometheus config
-│   └── grafana/            # Grafana provisioning and dashboards
-├── scripts/                # Local/dev/ops helper scripts
-├── docs/                   # Architecture and phase documentation
-├── .github/
-│   └── workflows/          # CI/CD pipelines
-├── .env.example
-├── .gitignore
-└── README.md
+โ”โ”€โ”€ backend/                # Node.js + Express control-plane API
+โ”โ”€โ”€ frontend/               # React web dashboard
+โ”โ”€โ”€ deploy/
+โ”   โ””โ”€โ”€ compose/            # Docker Compose deployment files and Phase 1 prototype
+โ”โ”€โ”€ infra/
+โ”   โ”โ”€โ”€ terraform/          # Infrastructure provisioning
+โ”   โ””โ”€โ”€ ansible/            # Host configuration
+โ”โ”€โ”€ monitoring/
+โ”   โ”โ”€โ”€ prometheus/         # Prometheus config
+โ”   โ””โ”€โ”€ grafana/            # Grafana provisioning and dashboards
+โ”โ”€โ”€ scripts/                # Local/dev/ops helper scripts
+โ”โ”€โ”€ docs/                   # Architecture and phase documentation
+โ”โ”€โ”€ .github/
+โ”   โ””โ”€โ”€ workflows/          # CI/CD pipelines
+โ”โ”€โ”€ .env.example
+โ”โ”€โ”€ .gitignore
+โ””โ”€โ”€ README.md
 ```
 
 ## Project Phases
 
-- **Phase 0** - Architecture and repository structure ✅
-- **Phase 1** - Minecraft Docker prototype ✅
-- **Phase 2** - Node.js + Express server-management API ✅
-- **Phase 3** - Web dashboard ✅
-- **Phase 4** - Persistent platform metadata and workload hardening
-- **Phase 5** - Docker Compose deployment
+- **Phase 0** - Architecture and repository structure โ…
+- **Phase 1** - Minecraft Docker prototype โ…
+- **Phase 2** - Node.js + Express server-management API โ…
+- **Phase 3** - Web dashboard โ…
+- **Phase 4** - Persistent platform metadata and workload hardening ✅
+- **Phase 5** - Docker Compose deployment ✅
 - **Phase 6** - CI/CD with GitHub Actions
 - **Phase 7** - Terraform infrastructure
 - **Phase 8** - Ansible configuration management
@@ -174,4 +174,6 @@ These can be added later as optional extensions after the core platform is stabl
 
 ## Status
 
-**Current phase: Phase 3 - React web dashboard implemented and production build validated. Next: Phase 4 persistent platform metadata and workload hardening.**
+**Current phase: Phase 5 - Single-host Docker Compose deployment implemented. Next: Phase 6 CI/CD with GitHub Actions.**
+
+

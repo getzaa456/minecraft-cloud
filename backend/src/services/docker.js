@@ -1,8 +1,21 @@
-﻿import Docker from 'dockerode';
+import Docker from 'dockerode';
 import { randomUUID } from 'node:crypto';
 import { config } from '../config.js';
 
-const docker = new Docker({ socketPath: config.dockerSocketPath });
+const createDockerClient = () => {
+  if (config.dockerHost) {
+    const endpoint = new URL(config.dockerHost);
+    return new Docker({
+      protocol: endpoint.protocol.replace(':', ''),
+      host: endpoint.hostname,
+      port: Number(endpoint.port || 2375),
+    });
+  }
+
+  return new Docker({ socketPath: config.dockerSocketPath });
+};
+
+const docker = createDockerClient();
 const MANAGED_LABEL = 'minecraft-cloud.managed';
 const SERVER_ID_LABEL = 'minecraft-cloud.server-id';
 
@@ -69,11 +82,11 @@ async function getManagedContainers() {
 }
 
 async function allocatePort() {
-  const containers = await getManagedContainers();
+  const containers = await docker.listContainers({ all: true });
   const usedPorts = new Set(
     containers.flatMap((container) =>
       (container.Ports ?? [])
-        .filter((port) => port.PrivatePort === 25565 && port.PublicPort)
+        .filter((port) => port.PublicPort)
         .map((port) => port.PublicPort),
     ),
   );
@@ -125,6 +138,7 @@ export async function createServer({ name, version, memoryMb, cpu, maxPlayers })
   const port = await allocatePort();
   const volumeName = `minecraft-cloud-${shortId}-data`;
   const containerName = `mc-${sanitizeName(name)}-${shortId}`;
+  let container;
 
   await docker.createVolume({
     Name: volumeName,
@@ -135,7 +149,7 @@ export async function createServer({ name, version, memoryMb, cpu, maxPlayers })
   });
 
   try {
-    const container = await docker.createContainer({
+    container = await docker.createContainer({
       Image: config.minecraft.image,
       name: containerName,
       Labels: {
@@ -171,7 +185,13 @@ export async function createServer({ name, version, memoryMb, cpu, maxPlayers })
         ],
         Memory: toBytes(memoryMb + 512),
         NanoCpus: toNanoCpus(cpu),
+        PidsLimit: 512,
         RestartPolicy: { Name: 'unless-stopped' },
+        SecurityOpt: ['no-new-privileges:true'],
+        LogConfig: {
+          Type: 'json-file',
+          Config: { 'max-size': '10m', 'max-file': '3' },
+        },
       },
       StopTimeout: 60,
     });
@@ -179,10 +199,17 @@ export async function createServer({ name, version, memoryMb, cpu, maxPlayers })
     await container.start();
     return serializeServer(await container.inspect());
   } catch (error) {
+    if (container) {
+      try {
+        await container.remove({ force: true });
+      } catch {
+        // Best-effort cleanup continues with the volume.
+      }
+    }
     try {
       await docker.getVolume(volumeName).remove();
     } catch {
-      // Best-effort cleanup if container creation fails.
+      // Reconciliation can surface leftovers if cleanup cannot complete.
     }
     throw error;
   }
@@ -226,4 +253,3 @@ export async function deleteServer(serverId) {
 
   return server;
 }
-

@@ -13,12 +13,7 @@ This phase proves that a Minecraft server can:
 - be stopped and started without losing world data;
 - expose logs and basic runtime state for troubleshooting.
 
-## Files
-
-- `deploy/compose/minecraft-prototype.compose.yml` - standalone prototype workload.
-- `deploy/compose/.env.prototype.example` - safe local configuration template.
-
-## Design
+## Historical Prototype`r`n`r`nPhase 1 originally used a standalone Compose prototype to validate the Minecraft workload. Those temporary Compose files were removed after Phase 5 consolidated deployment into `deploy/compose/platform.compose.yml`.`r`n`r`nThe validated concepts from Phase 1 remain in the current platform: persistent `/data` volumes, resource limits, graceful shutdown, and containerized Minecraft workloads.`r`n`r`n## Design
 
 ```text
 Minecraft client
@@ -41,7 +36,7 @@ The named volume is intentionally independent from the container lifecycle. Recr
 From the repository root, create a local environment file:
 
 ```powershell
-Copy-Item deploy/compose/.env.prototype.example deploy/compose/.env.prototype
+Use the Phase 5 deployment environment template: `deploy/compose/.env.platform.example`
 ```
 
 Review the values in `.env.prototype`. The default prototype uses one CPU and limits the container to 1536 MB while assigning 1 GB to the Minecraft JVM.
@@ -49,7 +44,7 @@ Review the values in `.env.prototype`. The default prototype uses one CPU and li
 ## Start the prototype
 
 ```powershell
-docker compose --env-file deploy/compose/.env.prototype -f deploy/compose/minecraft-prototype.compose.yml up -d
+docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml up -d
 ```
 
 The first startup can take longer because Docker must pull the image and Minecraft must create the initial world.
@@ -57,13 +52,13 @@ The first startup can take longer because Docker must pull the image and Minecra
 ## Check status
 
 ```powershell
-docker compose -f deploy/compose/minecraft-prototype.compose.yml ps
+docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml ps
 ```
 
 Follow the server logs:
 
 ```powershell
-docker compose -f deploy/compose/minecraft-prototype.compose.yml logs -f minecraft
+Use the web dashboard or backend API to create a Minecraft server, then inspect it with `docker ps` / `docker logs <container-name>`
 ```
 
 Once the server reports that startup is complete, connect a Minecraft Java client to:
@@ -84,8 +79,8 @@ If `MINECRAFT_PROTOTYPE_PORT` was changed, use that host port instead.
 Commands:
 
 ```powershell
-docker compose -f deploy/compose/minecraft-prototype.compose.yml stop minecraft
-docker compose -f deploy/compose/minecraft-prototype.compose.yml start minecraft
+Use the dashboard Stop action for the selected server
+Use the dashboard Start action for the selected server
 ```
 
 The data survives because `/data` is backed by the `minecraft-cloud-prototype-data` named volume.
@@ -103,13 +98,13 @@ The container should show the configured CPU and memory limits.
 Stop and remove only the container/network while keeping the world volume:
 
 ```powershell
-docker compose -f deploy/compose/minecraft-prototype.compose.yml down
+docker compose --env-file deploy/compose/.env.platform -f deploy/compose/platform.compose.yml down
 ```
 
 To intentionally reset the prototype world as well:
 
 ```powershell
-docker compose -f deploy/compose/minecraft-prototype.compose.yml down -v
+Do not remove workload volumes unless you intentionally want to delete persisted worlds
 ```
 
 Only use `-v` when you explicitly want to delete the prototype world.

@@ -3,6 +3,7 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { config } from './config.js';
+import { pingDatabase } from './db/database.js';
 import { errorHandler, notFoundHandler } from './middleware/errors.js';
 import serversRouter from './routes/servers.js';
 import { pingDocker } from './services/docker.js';
@@ -20,12 +21,27 @@ app.use(express.json({ limit: '32kb' }));
 app.use(morgan('dev'));
 
 app.get('/health', async (_req, res) => {
+  const health = {
+    status: 'ok',
+    docker: 'reachable',
+    database: 'reachable',
+  };
+
   try {
     await pingDocker();
-    res.json({ status: 'ok', docker: 'reachable' });
   } catch {
-    res.status(503).json({ status: 'degraded', docker: 'unreachable' });
+    health.status = 'degraded';
+    health.docker = 'unreachable';
   }
+
+  try {
+    await pingDatabase();
+  } catch {
+    health.status = 'degraded';
+    health.database = 'unreachable';
+  }
+
+  res.status(health.status === 'ok' ? 200 : 503).json(health);
 });
 
 app.use('/api/servers', serversRouter);

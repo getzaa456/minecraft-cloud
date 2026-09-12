@@ -12,6 +12,10 @@ export const config = {
   host: process.env.BACKEND_HOST ?? '0.0.0.0',
   port: numberFromEnv('BACKEND_PORT', 8000),
   corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+  databaseUrl:
+    process.env.DATABASE_URL ??
+    'postgresql://minecraft_cloud:change-me@localhost:5432/minecraft_cloud',
+  dockerHost: process.env.DOCKER_HOST ?? null,
   dockerSocketPath:
     process.env.DOCKER_SOCKET_PATH ??
     (process.platform === 'win32' ? '//./pipe/docker_engine' : '/var/run/docker.sock'),
