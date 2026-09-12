@@ -1,4 +1,4 @@
-﻿# Minecraft Cloud
+# Minecraft Cloud
 
 A small self-service Minecraft server hosting platform built as a DevOps / Platform Engineering portfolio project.
 
@@ -73,8 +73,8 @@ The browser never talks directly to Docker. Minecraft lifecycle operations are o
 minecraft-cloud/
 ├── backend/                # Node.js + Express control-plane API
 ├── frontend/               # React + Vite web dashboard
-├── deploy/
-│   └── compose/            # Production Docker Compose deployment
+├── docker-compose.yml     # Single-host platform deployment
+├── Caddyfile              # Reverse proxy routing
 ├── infra/
 │   ├── terraform/          # Infrastructure provisioning
 │   └── ansible/            # Host configuration
@@ -98,7 +98,7 @@ minecraft-cloud/
 - **Phase 3** - React web dashboard ✅
 - **Phase 4** - PostgreSQL metadata persistence and workload hardening ✅
 - **Phase 5** - Single-host Docker Compose deployment ✅
-- **Phase 6** - CI/CD with GitHub Actions
+- **Phase 6** - CI/CD with GitHub Actions + GHCR ✅
 - **Phase 7** - Terraform infrastructure
 - **Phase 8** - Ansible configuration management
 - **Phase 9** - Prometheus and Grafana monitoring
@@ -162,6 +162,28 @@ Only Caddy publishes an HTTP port to the host. Backend and PostgreSQL are reacha
 
 See `docs/phase-5-docker-compose-deployment.md` for the deployment runbook.
 
+## CI/CD
+
+Phase 6 adds GitHub Actions pipelines for automated quality checks and container delivery. Pull requests and pushes to `main` validate the backend, frontend, and Docker Compose configuration. After CI succeeds on `main`, the release workflow builds and publishes backend/frontend images to GitHub Container Registry (GHCR) with both `latest` and commit-specific `sha-*` tags.
+
+```text
+Pull Request / Push
+        |
+        v
+Backend + Frontend + Compose checks
+        |
+        v
+     main branch
+        |
+        v
+Build Docker images
+        |
+        v
+       GHCR
+```
+
+See `docs/phase-6-ci-cd.md` for workflow details.
+
 ## Quick Start
 
 Create the platform environment file:
@@ -175,10 +197,7 @@ Edit `.env` and change the default PostgreSQL password before deployment.
 Build and start the platform:
 
 ```powershell
-docker compose `
-  --env-file .env `
-  -f deploy/compose/platform.compose.yml `
-  up -d --build
+docker compose up -d --build
 ```
 
 Then open:
@@ -190,10 +209,7 @@ http://localhost
 Check platform status:
 
 ```powershell
-docker compose `
-  --env-file .env `
-  -f deploy/compose/platform.compose.yml `
-  ps
+docker compose ps
 ```
 
 ## MVP Scope
@@ -229,7 +245,7 @@ These can be added later as optional extensions after the core platform is stabl
 
 ## Status
 
-**Current phase: Phase 5 - Single-host Docker Compose deployment implemented. Next: Phase 6 CI/CD with GitHub Actions.**
+**Current phase: Phase 6 - CI/CD with GitHub Actions and GHCR implemented. Next: Phase 7 Terraform infrastructure.**
 
 
 

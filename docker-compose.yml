@@ -12,16 +12,16 @@ services:
       - app
 
   frontend:
-    build: ../../frontend
+    build: ./frontend
     restart: unless-stopped
     networks:
       - app
 
   backend:
-    build: ../../backend
+    build: backend
     restart: unless-stopped
     env_file:
-      - ../../.env
+      - .env
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       DOCKER_HOST: http://docker-socket-proxy:2375
@@ -36,7 +36,7 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     env_file:
-      - ../../.env
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
