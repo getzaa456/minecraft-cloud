@@ -1,8 +1,8 @@
-# Phase 1 - Minecraft Docker Prototype
+﻿# Phase 1 - Minecraft Docker Prototype
 
 ## Goal
 
-Validate the Minecraft workload independently before connecting it to the FastAPI control plane.
+Validate the Minecraft workload independently before connecting it to the Node.js + Express control plane.
 
 This phase proves that a Minecraft server can:
 
@@ -129,4 +129,5 @@ Phase 1 is complete when all of the following are demonstrated locally:
 
 The server is still defined statically in Docker Compose. This is only the workload prototype.
 
-In Phase 2, the FastAPI backend will replace this manual lifecycle by creating and controlling Minecraft containers dynamically through Docker Engine while keeping the workload concepts proven here: image, environment, ports, resource limits, and persistent volumes.
+In Phase 2, the Node.js + Express backend will replace this manual lifecycle by creating and controlling Minecraft containers dynamically through Docker Engine while keeping the workload concepts proven here: image, environment, ports, resource limits, and persistent volumes.
+

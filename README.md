@@ -19,8 +19,8 @@ The goal is to let a user create and manage isolated Minecraft server instances 
 | Area | Technology |
 | --- | --- |
 | Frontend | React + Vite |
-| Backend API | FastAPI |
-| Database | PostgreSQL |
+| Backend API | Node.js + Express |
+| Database | PostgreSQL (later phase) |
 | Runtime | Docker / Docker Compose |
 | Reverse Proxy | Caddy |
 | CI/CD | GitHub Actions + GHCR |
@@ -40,12 +40,12 @@ Caddy / HTTPS
    +-------------------+
    |                   |
    v                   v
-Frontend            Backend API
+Frontend          Node.js + Express
                         |
                 +-------+-------+
                 |               |
                 v               v
-           PostgreSQL       Docker Engine
+       PostgreSQL (later)   Docker Engine
                                 |
                    +------------+------------+
                    |            |            |
@@ -65,7 +65,7 @@ The web application never talks directly to the Docker socket. Docker lifecycle 
 
 ```text
 minecraft-cloud/
-├── backend/                # FastAPI control-plane API
+├── backend/                # Node.js + Express control-plane API
 ├── frontend/               # React web dashboard
 ├── deploy/
 │   └── compose/            # Docker Compose deployment files and Phase 1 prototype
@@ -87,10 +87,10 @@ minecraft-cloud/
 ## Project Phases
 
 - **Phase 0** - Architecture and repository structure ✅
-- **Phase 1** - Minecraft Docker prototype ✅ (configuration implemented and validated; runtime verification is performed locally)
-- **Phase 2** - Backend server-management API
+- **Phase 1** - Minecraft Docker prototype ✅
+- **Phase 2** - Node.js + Express server-management API ✅
 - **Phase 3** - Web dashboard
-- **Phase 4** - Persistent storage and resource limits
+- **Phase 4** - Persistent platform metadata and workload hardening
 - **Phase 5** - Docker Compose deployment
 - **Phase 6** - CI/CD with GitHub Actions
 - **Phase 7** - Terraform infrastructure
@@ -111,9 +111,26 @@ Key properties:
 - CPU limit.
 - Bounded Docker log files.
 - Graceful shutdown window.
-- Local RCON configuration for future control-plane integration.
 
 See `docs/phase-1-minecraft-prototype.md` for the local verification procedure.
+
+## Phase 2 Control Plane
+
+The backend is implemented with Node.js + Express and uses `dockerode` to manage Minecraft workloads through Docker Engine.
+
+Current API capabilities:
+
+- Docker-aware health check.
+- Create and automatically start a Minecraft server.
+- List managed servers.
+- Inspect one server.
+- Start, stop, and restart servers.
+- Delete a server and its world volume.
+- Allocate host ports from a bounded range.
+- Validate CPU, memory, Minecraft version, and player-count input.
+- Discover managed workloads through Docker labels.
+
+See `docs/phase-2-node-express-api.md` for API usage and local setup.
 
 ## MVP Scope
 
@@ -151,4 +168,4 @@ These can be added later as optional extensions after the core platform is stabl
 
 ## Status
 
-**Current phase: Phase 1 - Minecraft Docker prototype completed; ready for local runtime verification and Phase 2.**
+**Current phase: Phase 2 - Node.js + Express control-plane API implemented. Next: Phase 3 web dashboard.**
