@@ -1,4 +1,4 @@
-﻿# Project Scope
+# Project Scope
 
 ## Problem Statement
 
@@ -21,7 +21,6 @@ A user opens the dashboard, creates a Minecraft server with a small set of confi
 - Show basic server/container status.
 - Deploy the platform through Docker Compose.
 - Automate CI/CD through GitHub Actions.
-- Provision infrastructure with Terraform.
 - Configure the host with Ansible.
 - Collect infrastructure/container metrics with Prometheus.
 - Visualize metrics in Grafana.

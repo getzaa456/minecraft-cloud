@@ -27,7 +27,6 @@ The goal is to let a user create and manage isolated Minecraft server instances 
 | Reverse Proxy | Caddy |
 | Docker Control | Dockerode + Docker Socket Proxy |
 | CI/CD | GitHub Actions + GHCR |
-| Infrastructure | Terraform |
 | Configuration Management | Ansible |
 | Monitoring | Prometheus + Grafana + cAdvisor + Node Exporter |
 | Minecraft Runtime | Dockerized Minecraft server image |
@@ -76,7 +75,6 @@ minecraft-cloud/
 ├── docker-compose.yml     # Single-host platform deployment
 ├── Caddyfile              # Reverse proxy routing
 ├── infra/
-│   ├── terraform/          # Infrastructure provisioning
 │   └── ansible/            # Host configuration
 ├── monitoring/
 │   ├── prometheus/         # Prometheus configuration
@@ -99,10 +97,9 @@ minecraft-cloud/
 - **Phase 4** - PostgreSQL metadata persistence and workload hardening ✅
 - **Phase 5** - Single-host Docker Compose deployment ✅
 - **Phase 6** - CI/CD with GitHub Actions + GHCR ✅
-- **Phase 7** - Terraform infrastructure
-- **Phase 8** - Ansible configuration management
-- **Phase 9** - Prometheus and Grafana monitoring
-- **Phase 10** - Security hardening and documentation
+- **Phase 7** - Ansible configuration management
+- **Phase 8** - Prometheus and Grafana monitoring
+- **Phase 9** - Security hardening and documentation
 
 ## Current Platform Capabilities
 
@@ -184,6 +181,7 @@ Build Docker images
 
 See `docs/phase-6-ci-cd.md` for workflow details.
 
+
 ## Quick Start
 
 Create the platform environment file:
@@ -245,7 +243,7 @@ These can be added later as optional extensions after the core platform is stabl
 
 ## Status
 
-**Current phase: Phase 6 - CI/CD with GitHub Actions and GHCR implemented. Next: Phase 7 Terraform infrastructure.**
+**Current phase: Phase 6 - CI/CD with GitHub Actions and GHCR implemented. Next: Phase 7 Ansible configuration management.**
 
 
 

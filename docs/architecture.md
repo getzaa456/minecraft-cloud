@@ -1,4 +1,4 @@
-﻿# Architecture
+# Architecture
 
 ## Purpose
 
@@ -58,12 +58,6 @@ Docker Compose
 Infrastructure provisioning and configuration are separated:
 
 ```text
-Terraform
-   |
-   v
-Provision VM / network / firewall
-   |
-   v
 Ansible
    |
    v

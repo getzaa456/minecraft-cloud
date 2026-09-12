@@ -1,4 +1,4 @@
-﻿# Phase 5 - Docker Compose Deployment
+# Phase 5 - Docker Compose Deployment
 
 Phase 5 packages the Minecraft Cloud control plane into a single-host Docker Compose deployment.
 
@@ -124,9 +124,8 @@ This keeps the frontend configuration identical between development and deployme
 Phase 5 intentionally does not include:
 
 - CI/CD automation (Phase 6)
-- Terraform infrastructure (Phase 7)
-- Ansible host configuration (Phase 8)
-- Prometheus/Grafana monitoring (Phase 9)
-- public TLS/domain hardening and broader security review (Phase 10)
+- Ansible host configuration (Phase 7)
+- Prometheus/Grafana monitoring (Phase 8)
+- public TLS/domain hardening and broader security review (Phase 9)
 
 

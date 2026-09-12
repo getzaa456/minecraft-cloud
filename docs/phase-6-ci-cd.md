@@ -9,7 +9,7 @@ Phase 6 adds automated quality checks and container image delivery for Minecraft
 - Validate the Docker Compose configuration.
 - Build backend and frontend container images automatically.
 - Publish versioned images to GitHub Container Registry (GHCR).
-- Keep infrastructure deployment separate until Terraform and Ansible are introduced in Phases 7 and 8.
+- Keep host configuration and deployment separate until Ansible is introduced in Phase 7.
 
 ## Workflows
 
@@ -108,10 +108,9 @@ No `.env` file or application secret is committed to Git.
 
 Phase 6 implements continuous delivery of deployable container images, but does not SSH into a server or deploy to a manually configured host.
 
-The target infrastructure is intentionally introduced later:
+The target host configuration is intentionally introduced later:
 
-- Phase 7: Terraform provisions the infrastructure.
-- Phase 8: Ansible configures the host and deployment environment.
+- Phase 7: Ansible configures the host and deployment environment.
 
 After those phases, the delivery pipeline can consume the same GHCR images for automated deployment without redesigning the build pipeline.
 

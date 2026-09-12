@@ -1,4 +1,4 @@
-﻿# Environment / secrets
+# Environment / secrets
 .env
 .env.*
 !.env.example
@@ -24,16 +24,6 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Terraform
-**/.terraform/
-*.tfstate
-*.tfstate.*
-*.tfplan
-crash.log
-crash.*.log
-.terraformrc
-terraform.rc
-
 # Ansible
 *.retry
 
@@ -48,4 +38,3 @@ logs/
 
 # Local certificates
 certs/
-
