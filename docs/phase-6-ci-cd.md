@@ -1,47 +1,43 @@
-# Phase 6 - CI/CD with GitHub Actions and GHCR
+# Phase 6 - CI/CD with GitHub Actions, GHCR, and Self-Hosted Deployment
 
-Phase 6 adds automated quality checks and container image delivery for Minecraft Cloud.
+Phase 6 provides the complete delivery path for Minecraft Cloud: validate the code, build container images, publish them to GHCR, and deploy the exact successful commit to the production VM through a GitHub self-hosted runner.
 
 ## Goals
 
-- Validate backend code on every pull request and push to `main`.
+- Validate backend code on pull requests and pushes to `main`.
 - Validate frontend linting and production builds.
 - Validate the Docker Compose configuration.
 - Build backend and frontend container images automatically.
-- Publish versioned images to GitHub Container Registry (GHCR).
-- Keep host configuration and deployment separate until Ansible is introduced in Phase 7.
+- Publish immutable commit-specific images to GitHub Container Registry (GHCR).
+- Deploy successful `main` builds to the production VM with a self-hosted GitHub Actions runner.
 
-## Workflows
+## CI Workflow
 
-### CI - `.github/workflows/ci.yml`
-
-The CI workflow runs on pull requests and pushes to `main`.
-
-It contains three independent jobs:
+`.github/workflows/ci.yml` runs three independent jobs:
 
 1. **Backend checks**
-   - Install dependencies with `npm ci`.
-   - Run backend syntax checks.
-   - Run Node.js tests.
-   - Fail on high-severity dependency audit findings.
+   - `npm ci`
+   - syntax checks
+   - Node.js tests
+   - high-severity dependency audit
 
 2. **Frontend checks**
-   - Install dependencies with `npm ci`.
-   - Run ESLint.
-   - Produce a Vite production build.
-   - Fail on high-severity dependency audit findings.
+   - `npm ci`
+   - ESLint
+   - Vite production build
+   - high-severity dependency audit
 
 3. **Compose validation**
-   - Create a temporary `.env` from `.env.example`.
-   - Validate `deploy/compose/platform.compose.yml` with Docker Compose.
+   - create a temporary `.env` from `.env.example`
+   - run `docker compose config --quiet`
 
-The jobs run independently so failures can be identified quickly.
+## Release and Deployment Workflow
 
-## Container Delivery - `.github/workflows/release.yml`
+`.github/workflows/release.yml` starts after CI succeeds on `main`. It can also be started manually from `main`.
 
-The release workflow runs after the `CI` workflow completes successfully on `main`, and can also be started manually with `workflow_dispatch`. This prevents publishing images from commits that fail the quality gates.
+### Build and Publish
 
-It uses Docker Buildx and publishes two images:
+GitHub-hosted runners build and push:
 
 ```text
 ghcr.io/<github-owner>/minecraft-cloud-backend
@@ -50,10 +46,28 @@ ghcr.io/<github-owner>/minecraft-cloud-frontend
 
 Each image receives:
 
-- `latest` - the newest successful image from `main`.
-- `sha-<commit>` - an immutable commit-specific tag for traceability and rollback.
+- `latest`
+- `sha-<commit>`
 
-GitHub Actions authenticates to GHCR with the repository-provided `GITHUB_TOKEN`, so no registry password needs to be committed or added as a custom secret.
+The deployment uses the `sha-<commit>` tag so production is tied to the exact commit that passed CI.
+
+### Deploy
+
+The deploy job runs on:
+
+```text
+[self-hosted, linux, x64]
+```
+
+The runner is installed directly on the production Ubuntu VM. It:
+
+1. checks out the successful commit;
+2. logs in to GHCR with `GITHUB_TOKEN`;
+3. generates `.env` from `.env.example`;
+4. injects deployment secrets and image tags;
+5. pulls the release images;
+6. runs `docker compose up -d --no-build --remove-orphans`;
+7. prints the final Compose status.
 
 ## Pipeline Flow
 
@@ -73,72 +87,113 @@ Checks   Checks    Validate
        successful
            |
            v
-      push to main
+        main
            |
            v
 +----------------------+
 | Build Docker Images  |
 +----------------------+
-       |          |
-       v          v
-    Backend    Frontend
-       |          |
-       +----+-----+
-            |
-            v
-           GHCR
+           |
+           v
+          GHCR
+           |
+           v
++----------------------+
+| Self-Hosted Runner   |
+| Production Ubuntu VM |
++----------------------+
+           |
+           v
+ docker compose pull
+ docker compose up -d
 ```
 
-## Security and Permissions
+## Production Runner Requirements
 
-The CI workflow only requests read access to repository contents.
+The Ubuntu VM must already have:
 
-The release workflow requests:
+- Docker Engine;
+- Docker Compose v2;
+- a GitHub self-hosted runner registered to the repository;
+- runner user permission to execute Docker commands;
+- outbound access to GitHub and GHCR.
+
+The workflow does not install or configure the runner automatically.
+
+## GitHub Environment
+
+Create a GitHub Environment named:
 
 ```text
-contents: read
-packages: write
+production
 ```
 
-This is enough to check out the repository and publish images to GHCR without granting unnecessary repository permissions.
+Add this environment secret:
 
-No `.env` file or application secret is committed to Git.
+```text
+POSTGRES_PASSWORD
+```
 
-## Why Deployment Is Not Automated Yet
+Optionally add this environment variable when the dashboard is accessed through a VM IP or domain:
 
-Phase 6 implements continuous delivery of deployable container images, but does not SSH into a server or deploy to a manually configured host.
+```text
+CORS_ORIGIN=http://<vm-ip-or-domain>
+```
 
-The target host configuration is intentionally introduced later:
+No `.env` file is committed to Git.
 
-- Phase 7: Ansible configures the host and deployment environment.
+## Docker Compose Image Selection
 
-After those phases, the delivery pipeline can consume the same GHCR images for automated deployment without redesigning the build pipeline.
+The root `docker-compose.yml` supports both local development and production deployment.
+
+For local development:
+
+```powershell
+docker compose up -d --build
+```
+
+This builds the backend and frontend locally.
+
+For production, the workflow writes these values into `.env`:
+
+```text
+BACKEND_IMAGE=ghcr.io/<owner>/minecraft-cloud-backend:sha-<commit>
+FRONTEND_IMAGE=ghcr.io/<owner>/minecraft-cloud-frontend:sha-<commit>
+```
+
+Then the self-hosted runner uses:
+
+```bash
+docker compose pull
+docker compose up -d --no-build --remove-orphans
+```
+
+## Security Notes
+
+- CI only requests repository read access.
+- Release requires `packages: write` for GHCR publishing.
+- Deployment secrets are stored in the `production` GitHub Environment.
+- Production deploys immutable `sha-*` image tags rather than relying on `latest`.
+- The production job uses a dedicated self-hosted runner and does not require SSH from GitHub-hosted infrastructure.
 
 ## Verification
-
-The same core checks can be run locally before pushing:
-
-```powershell
-cd backend
-npm ci
-npm run check
-npm test
-npm audit --audit-level=high
-```
-
-```powershell
-cd frontend
-npm ci
-npm run check
-npm run build
-npm audit --audit-level=high
-```
 
 From the repository root:
 
 ```powershell
 Copy-Item .env.example .env
-docker compose --env-file .env -f deploy/compose/platform.compose.yml config --quiet
+docker compose config --quiet
 ```
 
-Once pushed to GitHub, open the repository **Actions** tab to inspect CI and release runs. Successful release runs publish the backend and frontend images under the repository owner's GitHub Packages / GHCR packages.
+On the production VM, verify the runner user can run:
+
+```bash
+docker version
+docker compose version
+```
+
+After a successful push to `main`, inspect the repository **Actions** tab. The expected sequence is:
+
+```text
+CI -> Publish Images -> Deploy to production
+```

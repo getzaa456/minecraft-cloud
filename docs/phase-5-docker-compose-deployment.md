@@ -33,7 +33,7 @@ Frontend :80       Backend :8000
                          Dynamic MC containers
 ```
 
-Only Caddy publishes an HTTP port. Frontend, backend, PostgreSQL, and the Docker API proxy are reachable only through internal Docker networks.
+Only Caddy publishes an HTTP port. Frontend, backend, PostgreSQL, and the Docker API proxy stay on Compose networks.
 
 Minecraft server ports are dynamically published on the host from the configured range (default `25565-25665`).
 
@@ -44,14 +44,14 @@ The backend does not mount `/var/run/docker.sock` directly. A dedicated socket-p
 - containers
 - images
 - volumes
-- ping/version
+- ping
 - write operations required for lifecycle management
 
-This reduces direct socket exposure, but the backend remains a trusted control-plane component. Any service with Docker write access must still be treated as security-sensitive.
+The backend remains a trusted control-plane component because it can still perform Docker write operations through the proxy.
 
 ## Local Deployment
 
-Copy the environment template:
+Create the environment file:
 
 ```powershell
 Copy-Item .env.example .env
@@ -62,13 +62,13 @@ Review at least `POSTGRES_PASSWORD` before using the stack outside a throwaway l
 Validate configuration:
 
 ```powershell
-docker compose --env-file .env -f deploy/compose/platform.compose.yml config
+docker compose config
 ```
 
 Build and start:
 
 ```powershell
-docker compose --env-file .env -f deploy/compose/platform.compose.yml up -d --build
+docker compose up -d --build
 ```
 
 Open:
@@ -80,19 +80,19 @@ http://localhost
 Check services:
 
 ```powershell
-docker compose --env-file .env -f deploy/compose/platform.compose.yml ps
+docker compose ps
 ```
 
 View logs:
 
 ```powershell
-docker compose --env-file .env -f deploy/compose/platform.compose.yml logs -f
+docker compose logs -f
 ```
 
 Backend logs only:
 
 ```powershell
-docker compose --env-file .env -f deploy/compose/platform.compose.yml logs -f backend
+docker compose logs -f backend
 ```
 
 ## Stop / Restart
@@ -100,32 +100,44 @@ docker compose --env-file .env -f deploy/compose/platform.compose.yml logs -f ba
 Stop while keeping persistent data:
 
 ```powershell
-docker compose --env-file .env -f deploy/compose/platform.compose.yml down
+docker compose down
 ```
 
 Start again:
 
 ```powershell
-docker compose --env-file .env -f deploy/compose/platform.compose.yml up -d
+docker compose up -d
 ```
 
-Do not use `down -v` unless you intentionally want to remove Compose-managed PostgreSQL and Caddy volumes.
+Do not use `down -v` unless you intentionally want to remove Compose-managed persistent data.
 
 Minecraft world volumes are created dynamically by the backend and are not declared in this Compose file.
 
+## Local vs Production Images
+
+The root `docker-compose.yml` defines both `build` and `image` for backend and frontend.
+
+For local development, the default image names are used and `--build` builds from local source.
+
+For production, Phase 6 writes GHCR image references into `.env` through:
+
+```text
+BACKEND_IMAGE=ghcr.io/<owner>/minecraft-cloud-backend:sha-<commit>
+FRONTEND_IMAGE=ghcr.io/<owner>/minecraft-cloud-frontend:sha-<commit>
+```
+
+The self-hosted runner then pulls and starts those images with `--no-build`.
+
 ## Development Workflow
 
-The React application now uses same-origin API paths. During local Vite development, `vite.config.js` proxies `/api` and `/health` to `http://localhost:8000`. In the Compose deployment, Caddy performs the equivalent routing.
+The React application uses same-origin API paths. During local Vite development, `vite.config.js` proxies `/api` and `/health` to `http://localhost:8000`. In the Compose deployment, Caddy performs the equivalent routing.
 
-This keeps the frontend configuration identical between development and deployment and avoids exposing backend port `8000` publicly.
+This keeps the frontend configuration consistent and avoids exposing backend port `8000` publicly.
 
 ## Phase Boundary
 
 Phase 5 intentionally does not include:
 
-- CI/CD automation (Phase 6)
-- Ansible host configuration (Phase 7)
-- Prometheus/Grafana monitoring (Phase 8)
-- public TLS/domain hardening and broader security review (Phase 9)
-
-
+- CI/CD and production deployment automation (Phase 6)
+- Prometheus/Grafana monitoring (Phase 7)
+- public TLS/domain hardening and broader security review (Phase 8)

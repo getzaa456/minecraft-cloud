@@ -1,4 +1,4 @@
-name: Release Images
+name: Release and Deploy
 
 on:
   workflow_run:
@@ -13,7 +13,7 @@ permissions:
   packages: write
 
 concurrency:
-  group: release-${{ github.event.workflow_run.head_branch || github.ref }}
+  group: production-deploy
   cancel-in-progress: false
 
 env:
@@ -23,7 +23,7 @@ jobs:
   publish:
     name: Publish ${{ matrix.service }} image
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     strategy:
@@ -80,3 +80,50 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+  deploy:
+    name: Deploy to production
+    needs: publish
+    runs-on: [self-hosted, linux, x64]
+    environment: production
+
+    steps:
+      - name: Resolve source commit
+        id: source
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.source.outputs.sha }}
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Create deployment environment
+        shell: bash
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          CORS_ORIGIN: ${{ vars.CORS_ORIGIN }}
+        run: |
+          test -n "$POSTGRES_PASSWORD"
+          cp .env.example .env
+          sed -i "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=${POSTGRES_PASSWORD}|" .env
+          sed -i "s|^CORS_ORIGIN=.*|CORS_ORIGIN=${CORS_ORIGIN:-http://localhost}|" .env
+          echo "BACKEND_IMAGE=ghcr.io/${{ github.repository_owner }}/minecraft-cloud-backend:sha-${{ steps.source.outputs.sha }}" >> .env
+          echo "FRONTEND_IMAGE=ghcr.io/${{ github.repository_owner }}/minecraft-cloud-frontend:sha-${{ steps.source.outputs.sha }}" >> .env
+
+      - name: Pull release images
+        run: docker compose pull
+
+      - name: Deploy platform
+        run: docker compose up -d --no-build --remove-orphans
+
+      - name: Show deployment status
+        run: docker compose ps

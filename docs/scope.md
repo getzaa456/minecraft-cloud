@@ -20,8 +20,9 @@ A user opens the dashboard, creates a Minecraft server with a small set of confi
 - Set CPU and memory limits.
 - Show basic server/container status.
 - Deploy the platform through Docker Compose.
-- Automate CI/CD through GitHub Actions.
-- Configure the host with Ansible.
+- Automate CI/CD and production delivery through GitHub Actions.
+- Publish backend/frontend images to GHCR.
+- Deploy through a GitHub self-hosted runner on the production VM.
 - Collect infrastructure/container metrics with Prometheus.
 - Visualize metrics in Grafana.
 
@@ -43,21 +44,22 @@ A user opens the dashboard, creates a Minecraft server with a small set of confi
 
 ## Success Criteria
 
-Phase 10 is considered successful when the repository demonstrates the complete path below:
+The MVP is considered successful when the repository demonstrates the complete path below:
 
 ```text
-Infrastructure as Code
-        ->
-Configured Docker Host
-        ->
-Automated Application Deployment
-        ->
+Git Push
+   ->
+CI Validation
+   ->
+Build + Push Images to GHCR
+   ->
+Self-Hosted Runner Deployment
+   ->
 Web-Controlled Minecraft Containers
-        ->
+   ->
 Persistent Data + Resource Limits
-        ->
+   ->
 Metrics + Dashboard
 ```
 
 The final system should be easy to demonstrate locally or on one small Linux VM and easy to explain in a DevOps internship interview.
-

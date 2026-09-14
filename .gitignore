@@ -24,9 +24,6 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Ansible
-*.retry
-
 # Runtime data
 runtime/
 data/

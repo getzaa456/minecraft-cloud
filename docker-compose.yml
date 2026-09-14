@@ -12,13 +12,15 @@ services:
       - app
 
   frontend:
+    image: ${FRONTEND_IMAGE:-minecraft-cloud-frontend:local}
     build: ./frontend
     restart: unless-stopped
     networks:
       - app
 
   backend:
-    build: backend
+    image: ${BACKEND_IMAGE:-minecraft-cloud-backend:local}
+    build: ./backend
     restart: unless-stopped
     env_file:
       - .env

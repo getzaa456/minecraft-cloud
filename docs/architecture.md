@@ -42,30 +42,24 @@ Developer
 GitHub
    |
    v
-GitHub Actions
+GitHub Actions CI
    |
    +----> test / lint
-   +----> build images
-   +----> push to GHCR
+   +----> validate Compose
    |
    v
-Deployment Host
+Build + push images to GHCR
    |
    v
-Docker Compose
+Self-hosted GitHub Actions runner
+(on the production Linux VM)
+   |
+   +----> pull sha-tagged images
+   +----> render runtime .env from GitHub Environment values
+   +----> docker compose up -d --no-build
 ```
 
-Infrastructure provisioning and configuration are separated:
-
-```text
-Ansible
-   |
-   v
-Install and configure Docker + host dependencies
-   |
-   v
-Docker Compose
-```
+The production VM and GitHub self-hosted runner are prepared manually. GitHub Actions owns application delivery after the host is ready.
 
 ## Observability
 
@@ -82,12 +76,10 @@ Monitoring focuses on host health and per-container resource usage. Centralized 
 - The browser never receives access to the Docker socket.
 - Only the backend is allowed to perform Docker lifecycle operations.
 - Minecraft containers receive bounded CPU and memory resources.
-- Runtime secrets must be supplied through environment variables or deployment secrets, not committed to Git.
+- Runtime secrets must be supplied through environment variables or GitHub Environment secrets, not committed to Git.
 - Persistent world data is stored separately from disposable containers.
+- Production deployment uses commit-specific `sha-*` container image tags.
 
 ## Initial Deployment Model
 
-The MVP targets a **single Linux host**. This is intentional: it keeps the architecture understandable while still demonstrating container orchestration concepts, infrastructure automation, CI/CD, and monitoring.
-
-Kubernetes, multi-node scheduling, and multi-region hosting are explicitly deferred.
-
+The MVP targets a **single Linux host**. This is intentional: it keeps the architecture understandable while still demonstrating container orchestration, CI/CD, automated delivery, and monitoring.

@@ -12,8 +12,7 @@ The goal is to let a user create and manage isolated Minecraft server instances 
 - Apply CPU and memory limits to game-server workloads.
 - Store durable platform metadata in PostgreSQL.
 - Deploy the platform as a single-host Docker Compose stack.
-- Automate application delivery with CI/CD.
-- Provision and configure infrastructure using Infrastructure as Code.
+- Automate CI/CD and production delivery with GitHub Actions.
 - Monitor host and container health with Prometheus and Grafana.
 
 ## Stack
@@ -26,8 +25,7 @@ The goal is to let a user create and manage isolated Minecraft server instances 
 | Runtime | Docker / Docker Compose |
 | Reverse Proxy | Caddy |
 | Docker Control | Dockerode + Docker Socket Proxy |
-| CI/CD | GitHub Actions + GHCR |
-| Configuration Management | Ansible |
+| CI/CD | GitHub Actions + GHCR + Self-Hosted Runner |
 | Monitoring | Prometheus + Grafana + cAdvisor + Node Exporter |
 | Minecraft Runtime | Dockerized Minecraft server image |
 
@@ -72,17 +70,15 @@ The browser never talks directly to Docker. Minecraft lifecycle operations are o
 minecraft-cloud/
 ├── backend/                # Node.js + Express control-plane API
 ├── frontend/               # React + Vite web dashboard
-├── docker-compose.yml     # Single-host platform deployment
-├── Caddyfile              # Reverse proxy routing
-├── infra/
-│   └── ansible/            # Host configuration
+├── docker-compose.yml      # Local and production Compose definition
+├── Caddyfile               # Reverse proxy routing
 ├── monitoring/
 │   ├── prometheus/         # Prometheus configuration
 │   └── grafana/            # Grafana provisioning and dashboards
 ├── scripts/                # Local/dev/ops helper scripts
 ├── docs/                   # Architecture and phase documentation
 ├── .github/
-│   └── workflows/          # CI/CD pipelines
+│   └── workflows/          # CI/CD and production deployment
 ├── .env.example
 ├── .gitignore
 └── README.md
@@ -96,10 +92,9 @@ minecraft-cloud/
 - **Phase 3** - React web dashboard ✅
 - **Phase 4** - PostgreSQL metadata persistence and workload hardening ✅
 - **Phase 5** - Single-host Docker Compose deployment ✅
-- **Phase 6** - CI/CD with GitHub Actions + GHCR ✅
-- **Phase 7** - Ansible configuration management
-- **Phase 8** - Prometheus and Grafana monitoring
-- **Phase 9** - Security hardening and documentation
+- **Phase 6** - CI/CD + GHCR + self-hosted production deployment ✅
+- **Phase 7** - Prometheus and Grafana monitoring
+- **Phase 8** - Security hardening and documentation
 
 ## Current Platform Capabilities
 
@@ -161,7 +156,7 @@ See `docs/phase-5-docker-compose-deployment.md` for the deployment runbook.
 
 ## CI/CD
 
-Phase 6 adds GitHub Actions pipelines for automated quality checks and container delivery. Pull requests and pushes to `main` validate the backend, frontend, and Docker Compose configuration. After CI succeeds on `main`, the release workflow builds and publishes backend/frontend images to GitHub Container Registry (GHCR) with both `latest` and commit-specific `sha-*` tags.
+Phase 6 now covers both image delivery and production deployment.
 
 ```text
 Pull Request / Push
@@ -177,10 +172,21 @@ Build Docker images
         |
         v
        GHCR
+        |
+        v
+Self-hosted GitHub runner
+(on production VM)
+        |
+        v
+docker compose pull
+        |
+        v
+docker compose up -d --no-build
 ```
 
-See `docs/phase-6-ci-cd.md` for workflow details.
+The release workflow deploys commit-specific `sha-*` image tags so the running version matches the exact commit that passed CI.
 
+See `docs/phase-6-ci-cd.md` for runner requirements, GitHub Environment configuration, and deployment flow.
 
 ## Quick Start
 
@@ -192,7 +198,7 @@ Copy-Item .env.example .env
 
 Edit `.env` and change the default PostgreSQL password before deployment.
 
-Build and start the platform:
+Build and start the platform locally:
 
 ```powershell
 docker compose up -d --build
@@ -220,8 +226,7 @@ The first complete version is focused on:
 - PostgreSQL-backed platform metadata.
 - Web-based management.
 - Docker Compose deployment.
-- CI/CD.
-- Infrastructure automation.
+- CI/CD and self-hosted production deployment.
 - Host and container monitoring.
 
 ## Explicitly Out of Scope for the MVP
@@ -243,8 +248,4 @@ These can be added later as optional extensions after the core platform is stabl
 
 ## Status
 
-**Current phase: Phase 6 - CI/CD with GitHub Actions and GHCR implemented. Next: Phase 7 Ansible configuration management.**
-
-
-
-
+**Current phase: Phase 6 - CI/CD with GHCR and self-hosted production deployment implemented. Next: Phase 7 Prometheus and Grafana monitoring.**
