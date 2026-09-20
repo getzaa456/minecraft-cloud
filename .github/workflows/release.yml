@@ -98,6 +98,20 @@ jobs:
             echo "sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Free disk space
+        shell: bash
+        run: |
+          echo "Disk usage before cleanup:"
+          df -h /
+
+          docker container prune -f || true
+          docker image prune -af --filter "until=168h" || true
+          docker builder prune -af --filter "until=168h" || true
+          docker network prune -f || true
+
+          echo "Disk usage after cleanup:"
+          df -h /
+
       - name: Checkout
         uses: actions/checkout@v4
         with:

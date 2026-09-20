@@ -1,65 +1,32 @@
 # Project Scope
 
-## Problem Statement
+Minecraft Cloud is a student project for practicing DevOps and full-stack deployment.
 
-Provide a small web-based control plane that can create and manage Minecraft server containers on a Docker host.
+## Included
 
-The project is a portfolio project, not a public hosting business. Architectural decisions therefore prioritize clarity, automation, observability, and demonstrable DevOps practices over large-scale feature coverage.
+- React dashboard
+- Node.js API
+- PostgreSQL
+- Docker-based Minecraft servers
+- persistent world volumes
+- CPU/RAM limits
+- Docker Compose deployment
+- GitHub Actions CI/CD
+- GHCR
+- self-hosted runner deployment
+- Prometheus and Grafana monitoring
 
-## MVP User Story
+## Not Included
 
-A user opens the dashboard, creates a Minecraft server with a small set of configuration options, and can then start, stop, restart, or delete it. The server world persists across container restarts/re-creation, and basic resource/status information is visible.
+To keep the project manageable for one student, it does not include:
 
-## MVP Capabilities
-
-- Create one or more Minecraft server instances.
-- Assign each instance a unique identifier and host port.
-- Start, stop, restart, and delete an instance.
-- Persist world data with Docker volumes.
-- Store platform metadata in PostgreSQL.
-- Set CPU and memory limits.
-- Show basic server/container status.
-- Deploy the platform through Docker Compose.
-- Automate CI/CD and production delivery through GitHub Actions.
-- Publish backend/frontend images to GHCR.
-- Deploy through a GitHub self-hosted runner on the production VM.
-- Collect infrastructure/container metrics with Prometheus.
-- Visualize metrics in Grafana.
-
-## Non-Goals for MVP
-
-- Payments or subscriptions
-- Production-grade public multi-tenancy
+- payments
+- public multi-user hosting
 - Kubernetes
-- Multi-host scheduling
-- Multi-region deployment
-- Autoscaling
-- Mod/plugin marketplace
-- Browser terminal
-- FTP/file manager
-- OAuth/social login
-- Email workflows
-- Scheduled backup system
-- Advanced Minecraft networking/proxy clusters
+- autoscaling
+- multi-region deployment
+- plugin/mod marketplace
+- FTP or web terminal
+- advanced backup systems
 
-## Success Criteria
-
-The MVP is considered successful when the repository demonstrates the complete path below:
-
-```text
-Git Push
-   ->
-CI Validation
-   ->
-Build + Push Images to GHCR
-   ->
-Self-Hosted Runner Deployment
-   ->
-Web-Controlled Minecraft Containers
-   ->
-Persistent Data + Resource Limits
-   ->
-Metrics + Dashboard
-```
-
-The final system should be easy to demonstrate locally or on one small Linux VM and easy to explain in a DevOps internship interview.
+The goal is to keep the project small enough to understand and explain while still showing practical DevOps skills.
