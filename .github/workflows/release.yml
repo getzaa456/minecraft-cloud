@@ -110,11 +110,14 @@ jobs:
         shell: bash
         env:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
           CORS_ORIGIN: ${{ vars.CORS_ORIGIN }}
         run: |
           test -n "$POSTGRES_PASSWORD"
+          test -n "$GRAFANA_ADMIN_PASSWORD"
           cp .env.example .env
           sed -i "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=${POSTGRES_PASSWORD}|" .env
+          sed -i "s|^GRAFANA_ADMIN_PASSWORD=.*|GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}|" .env
           sed -i "s|^CORS_ORIGIN=.*|CORS_ORIGIN=${CORS_ORIGIN:-http://localhost}|" .env
           echo "BACKEND_IMAGE=ghcr.io/${{ github.repository_owner }}/minecraft-cloud-backend:sha-${{ steps.source.outputs.sha }}" >> .env
           echo "FRONTEND_IMAGE=ghcr.io/${{ github.repository_owner }}/minecraft-cloud-frontend:sha-${{ steps.source.outputs.sha }}" >> .env
@@ -138,6 +141,10 @@ jobs:
           pull_with_retry caddy:2-alpine
           pull_with_retry postgres:17-alpine
           pull_with_retry tecnativa/docker-socket-proxy:latest
+          pull_with_retry quay.io/prometheus/prometheus:v3.14.0
+          pull_with_retry grafana/grafana:13.2.2
+          pull_with_retry quay.io/prometheus/node-exporter:v1.12.1
+          pull_with_retry ghcr.io/google/cadvisor:v0.60.6
 
       - name: Pull application images from GHCR
         run: docker compose pull backend frontend

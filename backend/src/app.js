@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { config } from './config.js';
 import { pingDatabase } from './db/database.js';
 import { errorHandler, notFoundHandler } from './middleware/errors.js';
+import { metricsHandler, metricsMiddleware } from './middleware/metrics.js';
 import serversRouter from './routes/servers.js';
 import { pingDocker } from './services/docker.js';
 
@@ -19,6 +20,9 @@ app.use(
 );
 app.use(express.json({ limit: '32kb' }));
 app.use(morgan('dev'));
+app.use(metricsMiddleware);
+
+app.get('/metrics', metricsHandler);
 
 app.get('/health', async (_req, res) => {
   const health = {

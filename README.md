@@ -93,7 +93,7 @@ minecraft-cloud/
 - **Phase 4** - PostgreSQL metadata persistence and workload hardening ✅
 - **Phase 5** - Single-host Docker Compose deployment ✅
 - **Phase 6** - CI/CD + GHCR + self-hosted production deployment ✅
-- **Phase 7** - Prometheus and Grafana monitoring
+- **Phase 7** - Prometheus and Grafana monitoring ✅
 - **Phase 8** - Security hardening and documentation
 
 ## Current Platform Capabilities
@@ -188,6 +188,20 @@ The release workflow deploys commit-specific `sha-*` image tags so the running v
 
 See `docs/phase-6-ci-cd.md` for runner requirements, GitHub Environment configuration, and deployment flow.
 
+## Monitoring
+
+Phase 7 adds Prometheus, Grafana, Node Exporter, cAdvisor, and backend application metrics.
+
+```text
+Node Exporter -----+
+cAdvisor ----------+--> Prometheus --> Grafana :3001
+Backend /metrics --+
+```
+
+Grafana automatically provisions the **Minecraft Cloud Overview** dashboard with host CPU/RAM, container CPU/RAM, backend request rate, 5xx rate, and p95 latency.
+
+See `docs/phase-7-monitoring.md` for configuration and verification.
+
 ## Quick Start
 
 Create the platform environment file:
@@ -248,4 +262,4 @@ These can be added later as optional extensions after the core platform is stabl
 
 ## Status
 
-**Current phase: Phase 6 - CI/CD with GHCR and self-hosted production deployment implemented. Next: Phase 7 Prometheus and Grafana monitoring.**
+**Current phase: Phase 7 - Prometheus and Grafana monitoring implemented. Next: Phase 8 security hardening and documentation.**

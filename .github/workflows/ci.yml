@@ -84,3 +84,21 @@ jobs:
 
       - name: Validate Compose configuration
         run: docker compose config --quiet
+
+  monitoring:
+    name: Monitoring config validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Prometheus configuration
+        run: >-
+          docker run --rm
+          --entrypoint /bin/promtool
+          -v "${{ github.workspace }}/monitoring/prometheus:/etc/prometheus:ro"
+          quay.io/prometheus/prometheus:v3.14.0
+          check config /etc/prometheus/prometheus.yml
+
+      - name: Validate Grafana dashboard JSON
+        run: python -m json.tool monitoring/grafana/dashboards/minecraft-cloud-overview.json > /dev/null
